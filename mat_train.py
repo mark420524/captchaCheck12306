@@ -28,24 +28,6 @@ ap.add_argument("-l", "--labelbin", required=True,
 ap.add_argument("-p", "--plot", type=str, default="plot.png",
 	help="path to output accuracy/loss plot")
 args = vars(ap.parse_args())
-
-
-
-34
-35
-36
-37
-38
-39
-40
-41
-42
-43
-44
-45
-46
-47
-48
 # initialize the number of epochs to train for, initial learning rate,
 # batch size, and image dimensions
 EPOCHS = 100
@@ -92,22 +74,6 @@ labels = lb.fit_transform(labels)
 aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
 	height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
 	horizontal_flip=True, fill_mode="nearest")
-
-
-84
-85
-86
-87
-88
-89
-90
-91
-92
-93
-94
-95
-96
-97
 # initialize the model
 print("[INFO] compiling model...")
 model = SmallerVGGNet.build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
