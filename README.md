@@ -8,3 +8,6 @@ download the 12306 captcha and check the result
   use CNN to check the captcha. 
 
   CNN训练数据需要人工识别图片并标记为相应的类型,人工处理验证码的类别进行CNN训练.此步骤比较繁琐
+
+  ```mat_train.py```参考链接
+  [https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/](https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/ "https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/")
