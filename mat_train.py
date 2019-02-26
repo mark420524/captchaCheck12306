@@ -71,6 +71,9 @@ labels = lb.fit_transform(labels)
 # the data for training and the remaining 20% for testing
 (trainX, testX, trainY, testY) = train_test_split(data,
 	labels, test_size=0.2, random_state=42)
+"""
+  图像预处理  参数意义参见  https://keras.io/zh/preprocessing/image/
+"""
 aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
 	height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
 	horizontal_flip=True, fill_mode="nearest")
@@ -79,6 +82,13 @@ print("[INFO] compiling model...")
 model = SmallerVGGNet.build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
 	                        depth=IMAGE_DIMS[2], classes=len(lb.classes_))
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
+"""
+   编译训练, 
+   优化器optimizer: Adam
+        decay: float >= 0. 每次参数更新后学习率衰减值。INIT_LR / EPOCHS
+   损失函数loss : categorical_crossentropy
+   评估标准 Metrics:
+"""
 model.compile(loss="categorical_crossentropy", optimizer=opt,
 	metrics=["accuracy"])
  
