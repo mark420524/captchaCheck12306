@@ -13,4 +13,6 @@ download the 12306 captcha and check the result
   [https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/](https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/ "https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/")
 
  
-  训练依赖```keras  sklearn imutils matplotlib tensorflow opencv-python```
+  训练依赖 ```keras  sklearn imutils matplotlib tensorflow opencv-python```
+
+  训练命令 ```python mat_train.py --dataset traindata  --model aaa.model --labelbin 12306.pickle```
