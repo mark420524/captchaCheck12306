@@ -11,3 +11,5 @@ download the 12306 captcha and check the result
 
   ```mat_train.py```参考链接
   [https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/](https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/ "https://www.pyimagesearch.com/2018/04/16/keras-and-convolutional-neural-networks-cnns/")
+
+  ```keras  sklearn imutils matplotlib tensorflow```
