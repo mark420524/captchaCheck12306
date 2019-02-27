@@ -1,7 +1,9 @@
+# coding=utf-8
 import matplotlib
 matplotlib.use("Agg")
  
 # import the necessary packages
+from keras.callbacks import Callback, EarlyStopping, ReduceLROnPlateau, ModelCheckpoint, CSVLogger
 from keras.preprocessing.image import ImageDataGenerator
 from keras.optimizers import Adam
 from keras.preprocessing.image import img_to_array
@@ -20,13 +22,13 @@ import os
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-d", "--dataset", required=True,
-	help="path to input dataset (i.e., directory of images)")
+    help="path to input dataset (i.e., directory of images)")
 ap.add_argument("-m", "--model", required=True,
-	help="path to output model")
+    help="path to output model")
 ap.add_argument("-l", "--labelbin", required=True,
-	help="path to output label binarizer")
+    help="path to output label binarizer")
 ap.add_argument("-p", "--plot", type=str, default="plot.png",
-	help="path to output accuracy/loss plot")
+    help="path to output accuracy/loss plot")
 args = vars(ap.parse_args())
 # initialize the number of epochs to train for, initial learning rate,
 # batch size, and image dimensions
@@ -34,7 +36,8 @@ EPOCHS = 100
 INIT_LR = 1e-3
 BS = 32
 IMAGE_DIMS = (67, 67, 3)
- 
+MODEL_CACHE_DIR = os.path.join(os.getcwd(), "save", "save_cache")
+LOSS_PLOT_PATH=args["plot"]
 # initialize the data and labels
 data = []
 labels = []
@@ -46,22 +49,26 @@ random.seed(42)
 random.shuffle(imagePaths)
 
 # loop over the input images
+
 for imagePath in imagePaths:
-	# load the image, pre-process it, and store it in the data list
-	image = cv2.imread(imagePath)
-	image = cv2.resize(image, (IMAGE_DIMS[1], IMAGE_DIMS[0]))
-	image = img_to_array(image)
-	data.append(image)
+    # load the image, pre-process it, and store it in the data list
+    #im_file = os.path.join('', imagePath)
+    image = cv2.imdecode(np.fromfile(imagePath, dtype=np.uint8),cv2.IMREAD_COLOR)
+    # 直接读取图片的路径 图片读取失败
+    #image = cv2.imread(im_file)
+    image = cv2.resize(image, (IMAGE_DIMS[1], IMAGE_DIMS[0]))
+    image = img_to_array(image)
+    data.append(image)
  
-	# extract the class label from the image path and update the
-	# labels list
-	label = imagePath.split(os.path.sep)[-2]
-	labels.append(label)
+    # extract the class label from the image path and update the
+    # labels list
+    label = imagePath.split(os.path.sep)[-2]
+    labels.append(label)
 # scale the raw pixel intensities to the range [0, 1]
 data = np.array(data, dtype="float") / 255.0
 labels = np.array(labels)
 print("[INFO] data matrix: {:.2f}MB".format(
-	data.nbytes / (1024 * 1000.0)))
+    data.nbytes / (1024 * 1000.0)))
  
 # binarize the labels
 lb = LabelBinarizer()
@@ -70,35 +77,46 @@ labels = lb.fit_transform(labels)
 # partition the data into training and testing splits using 80% of
 # the data for training and the remaining 20% for testing
 (trainX, testX, trainY, testY) = train_test_split(data,
-	labels, test_size=0.2, random_state=42)
+    labels, test_size=0.2, random_state=42)
 """
   图像预处理  参数意义参见  https://keras.io/zh/preprocessing/image/
 """
 aug = ImageDataGenerator(rotation_range=25, width_shift_range=0.1,
-	height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
-	horizontal_flip=True, fill_mode="nearest")
+    height_shift_range=0.1, shear_range=0.2, zoom_range=0.2,
+    horizontal_flip=True, fill_mode="nearest")
 # initialize the model
 print("[INFO] compiling model...")
 model = SmallerVGGNet.build(width=IMAGE_DIMS[1], height=IMAGE_DIMS[0],
-	                        depth=IMAGE_DIMS[2], classes=len(lb.classes_))
+                            depth=IMAGE_DIMS[2], classes=len(lb.classes_))
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 """
    编译训练, 
    优化器optimizer: Adam
         decay: float >= 0. 每次参数更新后学习率衰减值。INIT_LR / EPOCHS
-   损失函数loss : categorical_crossentropy
+   损失函数loss : sparse_categorical_crossentropy
    评估标准 Metrics:
 """
-model.compile(loss="categorical_crossentropy", optimizer=opt,
-	metrics=["accuracy"])
+model.compile(loss="sparse_categorical_crossentropy", optimizer=opt,
+    metrics=["accuracy"])
  
 # train the network
 print("[INFO] training network...")
+model_cache_path = os.path.join(MODEL_CACHE_DIR,"model_cache.model")
 H = model.fit_generator(
-	aug.flow(trainX, trainY, batch_size=BS),
-	validation_data=(testX, testY),
-	steps_per_epoch=len(trainX) // BS,
-	epochs=EPOCHS, verbose=1)
+    aug.flow(trainX, trainY, batch_size=BS),
+    validation_data=(testX, testY),
+    steps_per_epoch=len(trainX) // BS,
+    epochs=EPOCHS, verbose=1,
+    callbacks=[
+        ModelCheckpoint(
+            model_cache_path,
+            monitor='val_loss',
+            save_best_only=True,
+            verbose=1),
+        # EarlyStopping(patience=50),
+        ReduceLROnPlateau(patience=10),
+        CSVLogger("training.log")
+        ])
 # save the model to disk
 print("[INFO] serializing network...")
 model.save(args["model"])
