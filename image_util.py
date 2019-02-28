@@ -1,11 +1,12 @@
 # coding=utf-8
-from PIL import Image
+from PIL import Image,ImageFile
 import numpy as np
 import os
 import time
 import requests
 import uuid
-
+# broken data stream when reading image file 文件损坏修复
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 session=requests.Session()
 requests.packages.urllib3.disable_warnings()
 imageDir = "temp/"
@@ -39,6 +40,7 @@ def splitImageText( image, image_shape, mode=1):
     :param mode: 图中有几组验证码文字
     :return:
     """
+    
     if isinstance(image, str):
         raw_image = Image.open(image)
     # 裁切出验证码文字区域 高28 宽112
@@ -111,11 +113,15 @@ def curtDirImage(dir,image_shape=(64, 64)):
             f,e=os.path.splitext(file)
             if e==file_type:
                 count+=1
+                image_path = os.path.join(root,file)
+                #print(image_path)
+                flag = judgeImageBackground(image_path)
+                splitImageText(image_path,image_shape,flag)
     return count
 if __name__ == '__main__':
     image_dir="E:\\aaaaa\\download_captcha\\temp"
-    #flag=judgeImageBackground(image)
+    #flag=judgeImageBackground(image_dir)
     print(curtDirImage(image_dir))
     #imageShape = (64,64)
-    #cutImageName = splitImageText(image,imageShape,flag)
+    #cutImageName = splitImageText(image_dir,imageShape,flag)
     
