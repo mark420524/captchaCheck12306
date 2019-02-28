@@ -118,10 +118,59 @@ def curtDirImage(dir,image_shape=(64, 64)):
                 flag = judgeImageBackground(image_path)
                 splitImageText(image_path,image_shape,flag)
     return count
+
+def read_image(image_dir,image_shape=None,label_path="label.txt"):
+    """
+     读取图片
+     :params image_dir: 图片路径
+     :params image_shape: 图片宽高dict 
+     :params label_path: 12306图片分类label
+
+    """
+    label_object={}
+    if os.path.exists(label_path):
+        with open(label_path,encoding="utf-8") as files:
+            for lines in files:
+                # split 默认已空格拆分字符串
+                lable_name,id = lines.strip().split()
+                label_object[lable_name]=int(id)
+    else:
+        with open(label_path,"w",encoding="utf-8") as files:
+            for id, lable_name in enumerate(os.listdir(image_dir)):
+                # split 默认已空格拆分字符串
+                files.write("%s %s\n" % (lable_name, id))
+                #lable_name,id = lines.strip().split()
+                label_object[lable_name]=int(id)
+    # 训练的图像数组
+    train_images = []
+    # 训练的分类数组
+    train_labels = [] 
+    file_label_dict={}
+    for dir_name in os.listdir(image_dir):
+        for file_name in os.listdir(os.path.join(image_dir, dir_name)):
+            full_image_path = os.path.join(image_dir,dir_name,file_name)
+            current_label = label_object[dir_name]
+            file_label_dict[full_path]=label
+    # 获取所有图片全路径
+    keys = list(file_label_dict.keys())
+    #打乱训练图片顺序
+    np.random.shuffle(keys)
+
+    for file_path in keys:
+        image = Image.open(file_path)
+
+        if image_shape and image.size != image_shape[:2]:
+            image = image.resize(image_shape[:2])
+        image = np.asarray(image)
+        train_images.append(image)
+        train_labels.append(file_label_dict[file_path])
+    return np.array(train_images),np.array(train_labels)
 if __name__ == '__main__':
-    image_dir="E:\\aaaaa\\download_captcha\\temp"
+    pass
+    #image_dir="E:\\aaaaa\\download_captcha\\curt_words\\traindata\\安全帽\\5072c75d-1911-459e-adc4-308f71f76f9e.png"
     #flag=judgeImageBackground(image_dir)
-    print(curtDirImage(image_dir))
+     
+    #print(read_image(image_dir))
     #imageShape = (64,64)
     #cutImageName = splitImageText(image_dir,imageShape,flag)
     
