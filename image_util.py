@@ -10,7 +10,8 @@ session=requests.Session()
 requests.packages.urllib3.disable_warnings()
 imageDir = "temp/"
 curtImg = "curt1/"
-
+file_type=".png"
+curtDir="curt_words/"
 def judgeImageBackground(image):
     """
     判断验证码文字区域的词个数
@@ -78,7 +79,7 @@ def splitImageText( image, image_shape, mode=1):
     cutImage = [image.crop((x1, 0, x2, 28)) for x1, x2 in resize_list]
     cutImageName = []
     for x3 in cutImage:
-        cutImageName.append(save(x3,imageDir,curtImg ))
+        cutImageName.append(save(x3,curtDir,curtImg ))
     return cutImageName
      
     
@@ -102,10 +103,19 @@ def save(image, dir, label, image_shape=(64, 64)):
     #image = image.resize(image_shape)
     image.save(os.path.join(path, filename))
     return dir+label+filename
+def curtDirImage(dir,image_shape=(64, 64)):
+    #path=os.path.join(dir, '')
+    count = 0
+    for root,dirs,files in os.walk(dir, topdown=False):
+        for file in files:
+            f,e=os.path.splitext(file)
+            if e==file_type:
+                count+=1
+    return count
 if __name__ == '__main__':
-    image="E:\\aaaaa\\3.jpg"
-    flag=judgeImageBackground(image)
-    print(flag)
-    imageShape = (64,64)
-    cutImageName = splitImageText(image,imageShape,flag)
-    print(cutImageName)
+    image_dir="E:\\aaaaa\\download_captcha\\temp"
+    #flag=judgeImageBackground(image)
+    print(curtDirImage(image_dir))
+    #imageShape = (64,64)
+    #cutImageName = splitImageText(image,imageShape,flag)
+    

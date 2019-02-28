@@ -27,4 +27,6 @@ def downloadCaptcha(dir,retry=False):
         file.write(r.content)
     return path
 if __name__ == '__main__':
-    print(downloadCaptcha("temp"))
+    while True:
+        downloadCaptcha("temp")
+        time.sleep(5)
