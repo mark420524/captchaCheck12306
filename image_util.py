@@ -150,7 +150,7 @@ def read_image(image_dir,image_shape=None,label_path="label.txt"):
         for file_name in os.listdir(os.path.join(image_dir, dir_name)):
             full_image_path = os.path.join(image_dir,dir_name,file_name)
             current_label = label_object[dir_name]
-            file_label_dict[full_path]=label
+            file_label_dict[full_image_path]=current_label
     # 获取所有图片全路径
     keys = list(file_label_dict.keys())
     #打乱训练图片顺序
