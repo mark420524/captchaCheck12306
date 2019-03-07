@@ -25,8 +25,10 @@ label_dict={
     69: '钟表', 70: '铃铛', 71: '锅铲', 72: '锣', 73: '锦旗', 74: '雨靴', 
     75: '鞭炮', 76: '风铃', 77: '高压锅', 78: '黑板', 79: '龙舟'}
 
-def read_data(full_image_path):
+def read_data(full_image_path,image_shape=(64, 64)):
     image = Image.open(full_image_path)
+    if image_shape and image.size != image_shape[:2]:
+        image = image.resize(image_shape[:2])
     data = np.array(image) / 255.0
     datas = []
     labels = []
@@ -81,15 +83,15 @@ logits = tf.layers.dense(dropout_fc, num_classes)
 predicted_labels = tf.arg_max(logits, 1)
  
 # 利用交叉熵定义损失
-losses = tf.nn.softmax_cross_entropy_with_logits(
-    labels=tf.one_hot(labels_placeholder, num_classes),
-    logits=logits
-)
+#losses = tf.nn.softmax_cross_entropy_with_logits(
+#    labels=tf.one_hot(labels_placeholder, num_classes),
+#    logits=logits
+#)
 # 平均损失
-mean_loss = tf.reduce_mean(losses)
+#mean_loss = tf.reduce_mean(losses)
 
 # 定义优化器，指定要优化的损失函数
-optimizer = tf.train.AdamOptimizer(learning_rate=1e-2).minimize(losses)
+#optimizer = tf.train.AdamOptimizer(learning_rate=1e-2).minimize(losses)
 # 用于保存和载入模型
 saver = tf.train.Saver()
 def test_model(full_image_path):
@@ -113,7 +115,9 @@ def test_model(full_image_path):
 if __name__ == "__main__":
     #read_label()
     #print(label_dict)
-    full_image = "E:\\aaaaa\\1111\\1.png"
-    a=test_model(full_image)
-    print(a)
-    print(label_dict[int(a)])
+    full_image_dir = "E:\\aaaaa\\2222\\"
+    for file_name in os.listdir(full_image_dir):
+        full_image_path = os.path.join(full_image_dir,file_name)
+        a=test_model(full_image_path)
+        print("test datas  {}\t validate labels: {}".format(a, label_dict[int(a)]))
+        
