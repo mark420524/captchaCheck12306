@@ -13,7 +13,7 @@ data_dir = "resize_words"
 # 训练还是测试
 train = False
 # 模型文件路径
-model_path = "save/image_model"
+model_path = "save/text_model"
 label_name_dict={}
 label_dict={}
 # 从文件夹读取图片和标签到numpy数组中
@@ -80,15 +80,20 @@ dropout_placeholdr = tf.placeholder(tf.float32)
 # 定义卷积层, 20个卷积核, 卷积核大小为5，用Relu激活
 conv0 = tf.layers.conv2d(datas_placeholder, 20, 5, activation=tf.nn.relu)
 # 定义max-pooling层，pooling窗口为2x2，步长为2x2
-pool0 = tf.layers.max_pooling2d(conv0, [2, 2], [2, 2])
+pool0 = tf.layers.max_pooling2d(conv0, [1, 1], [1, 1])
 
 # 定义卷积层, 40个卷积核, 卷积核大小为4，用Relu激活
 conv1 = tf.layers.conv2d(pool0, 40, 4, activation=tf.nn.relu)
 # 定义max-pooling层，pooling窗口为2x2，步长为2x2
-pool1 = tf.layers.max_pooling2d(conv1, [2, 2], [2, 2])
+pool1 = tf.layers.max_pooling2d(conv1, [1, 1], [1, 1])
+
+# 定义卷积层, 40个卷积核, 卷积核大小为4，用Relu激活
+conv2 = tf.layers.conv2d(pool0, 80, 4, activation=tf.nn.relu)
+# 定义max-pooling层，pooling窗口为2x2，步长为2x2
+pool2 = tf.layers.max_pooling2d(conv1, [1, 1], [1, 1])
 
 # 将3维特征转换为1维向量
-flatten = tf.layers.flatten(pool1)
+flatten = tf.layers.flatten(pool2)
 
 # 全连接层，转换为长度为100的特征向量
 fc = tf.layers.dense(flatten, 400, activation=tf.nn.relu)
@@ -152,8 +157,9 @@ with tf.Session() as sess:
         # 真实label与模型预测label
         for fpath, real_label, predicted_label in zip(fpaths, labels, predicted_labels_val):
             # 将label id转换为label名
-            real_label_name = label_name_dict[real_label]
-            predicted_label_name = label_name_dict[predicted_label]
+            
+            real_label_name = label_dict[int(real_label)]
+            predicted_label_name = label_dict[predicted_label]
             print("{}\t{} => {}".format(fpath, real_label_name, predicted_label_name))
 
 
