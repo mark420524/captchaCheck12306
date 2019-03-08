@@ -18,3 +18,15 @@ model = Sequential()
 model.add(Dense(output_dim=1,input_dim=1))
 model.compile(loss='mse', optimizer='sgd')
 model.compile(loss='mse', optimizer=SGD(lr=0.01, momentum=0.9, nesterov=True))
+
+
+print("welcome python hashlib world!")
+# 256
+hash_256 = hashlib.sha256()
+hash_str = "hello"
+hash_256.update(hash_str.encode('utf-8'))
+hash_256_value = hash_256.hexdigest()
+obj = hashlib.new('ripemd160', hash_str.encode('utf-8'))
+ripemd_160_value = obj.hexdigest()
+print("sha256:", hash_256_value)  # 16进制
+print("ripemd160 :", ripemd_160_value)
