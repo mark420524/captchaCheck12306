@@ -54,11 +54,11 @@ def read_data(data_dir,label_path="label.txt"):
     
     if need_save:
         with open(label_path,"w",encoding="utf-8") as files:
-            count_index=0
+            #count_index=0
             for key in label_name_dict:
                 # split 默认已空格拆分字符串
-                files.write("%s %s\n" % (label_name_dict[key], count_index))
-                count_index = count_index+1
+                files.write("%s %s\n" % (key ,label_name_dict[key] ))
+                #count_index = count_index+1
                 #lable_name,id = lines.strip().split()
                 #label_object[lable_name]=int(id)
     print("shape of datas: {}\tshape of labels: {}".format(datas.shape, labels.shape))
@@ -104,7 +104,7 @@ dropout_fc = tf.layers.dropout(fc, dropout_placeholdr)
 # 未激活的输出层
 logits = tf.layers.dense(dropout_fc, num_classes)
 
-predicted_labels = tf.arg_max(logits, 1)
+predicted_labels = tf.argmax(logits, 1)
 
 
 # 利用交叉熵定义损失

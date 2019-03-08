@@ -7,7 +7,7 @@ from PIL import Image
 import numpy as np
 import tensorflow as tf
 
-model_dir = "save/"
+model_dir = "text_model/"
 model_path = "text_model"
 label_dict={
     0: '中国结', 1: '仪表盘', 2: '公交卡', 3: '冰箱', 4: '创可贴', 
@@ -115,7 +115,7 @@ def test_model(full_image_path):
 if __name__ == "__main__":
     #read_label()
     #print(label_dict)
-    full_image_dir = "E:\\aaaaa\\2222\\"
+    full_image_dir = "E:\\aaaaa\\1111\\"
     for file_name in os.listdir(full_image_dir):
         full_image_path = os.path.join(full_image_dir,file_name)
         a=test_model(full_image_path)
