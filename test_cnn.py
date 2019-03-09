@@ -55,22 +55,26 @@ dropout_placeholdr = tf.placeholder(tf.float32)
 
 
 # 定义卷积层, 20个卷积核, 卷积核大小为5，用Relu激活
-conv0 = tf.layers.conv2d(datas_placeholder, 20, 6, activation=tf.nn.relu)
+conv0 = tf.layers.conv2d(datas_placeholder, 20, 8, activation=tf.nn.relu)
 # 定义max-pooling层，pooling窗口为2x2，步长为2x2
 pool0 = tf.layers.max_pooling2d(conv0, [2, 2], [2, 2])
 
 # 定义卷积层, 40个卷积核, 卷积核大小为4，用Relu激活
-conv1 = tf.layers.conv2d(pool0, 40, 4, activation=tf.nn.relu)
+conv1 = tf.layers.conv2d(pool0, 40, 6, activation=tf.nn.relu)
 # 定义max-pooling层，pooling窗口为2x2，步长为2x2
 pool1 = tf.layers.max_pooling2d(conv1, [2, 2], [2, 2])
 
 # 定义卷积层, 40个卷积核, 卷积核大小为4，用Relu激活
-conv2 = tf.layers.conv2d(pool1, 60, 2, activation=tf.nn.relu)
+conv2 = tf.layers.conv2d(pool1, 60, 4, activation=tf.nn.relu)
 # 定义max-pooling层，pooling窗口为2x2，步长为2x2
 pool2 = tf.layers.max_pooling2d(conv2, [2, 2], [2, 2])
 
+conv3 = tf.layers.conv2d(pool2, 80, 2, activation=tf.nn.relu)
+# 定义max-pooling层，pooling窗口为2x2，步长为2x2
+pool3 = tf.layers.max_pooling2d(conv3, [2, 2], [2, 2])
+
 # 将3维特征转换为1维向量
-flatten = tf.layers.flatten(pool2)
+flatten = tf.layers.flatten(pool3)
 
 # 全连接层，转换为长度为100的特征向量
 fc = tf.layers.dense(flatten, 400, activation=tf.nn.relu)
