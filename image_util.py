@@ -174,11 +174,11 @@ def resizeImage(dir,image_shape=(64, 64)):
             image = Image.open(full_image_path)
             if image_shape and image.size != image_shape[:2]:
                 image = image.resize(image_shape[:2])
-                save(image,"resize_words",dir_name )
+                save(image,"2222",dir_name )
     return count
 
 if __name__ == '__main__':
-    image_dir = "E:\\aaaaa\\download_captcha\\curt_words\\traindata"
+    image_dir = "E:\\aaaaa\\1111"
     
     resizeImage(image_dir)
     #image_dir="E:\\aaaaa\\download_captcha\\curt_words\\traindata\\安全帽\\5072c75d-1911-459e-adc4-308f71f76f9e.png"
