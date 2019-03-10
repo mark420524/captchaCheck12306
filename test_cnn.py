@@ -29,7 +29,7 @@ def read_data(full_image_path,image_shape=(64, 64)):
     image = Image.open(full_image_path)
     if image_shape and image.size != image_shape[:2]:
         image = image.resize(image_shape[:2])
-    data = np.array(image) / 255.0
+    data = np.array(image) 
     datas = []
     labels = []
     labels.append(15)
@@ -55,23 +55,23 @@ dropout_placeholdr = tf.placeholder(tf.float32)
 
 
 # 定义卷积层, 20个卷积核, 卷积核大小为5，用Relu激活
-conv0 = tf.layers.conv2d(datas_placeholder, 20, 8, activation=tf.nn.relu)
+conv0 = tf.layers.conv2d(datas_placeholder, 20, 3, activation=tf.nn.relu)
 # 定义max-pooling层，pooling窗口为2x2，步长为2x2
-pool0 = tf.layers.max_pooling2d(conv0, [2, 2], [2, 2])
+pool0 = tf.layers.max_pooling2d(conv0, [2, 2], [1, 1])
 
 # 定义卷积层, 40个卷积核, 卷积核大小为4，用Relu激活
-conv1 = tf.layers.conv2d(pool0, 40, 6, activation=tf.nn.relu)
+conv1 = tf.layers.conv2d(pool0, 40, 3, activation=tf.nn.relu)
 # 定义max-pooling层，pooling窗口为2x2，步长为2x2
-pool1 = tf.layers.max_pooling2d(conv1, [2, 2], [2, 2])
+pool1 = tf.layers.max_pooling2d(conv1, [2, 2], [1, 1])
 
 # 定义卷积层, 40个卷积核, 卷积核大小为4，用Relu激活
-conv2 = tf.layers.conv2d(pool1, 60, 4, activation=tf.nn.relu)
+conv2 = tf.layers.conv2d(pool1, 60, 2, activation=tf.nn.relu)
 # 定义max-pooling层，pooling窗口为2x2，步长为2x2
-pool2 = tf.layers.max_pooling2d(conv2, [2, 2], [2, 2])
+pool2 = tf.layers.max_pooling2d(conv2, [2, 2], [1, 1])
 
 conv3 = tf.layers.conv2d(pool2, 80, 2, activation=tf.nn.relu)
 # 定义max-pooling层，pooling窗口为2x2，步长为2x2
-pool3 = tf.layers.max_pooling2d(conv3, [2, 2], [2, 2])
+pool3 = tf.layers.max_pooling2d(conv3, [2, 2], [1, 1])
 
 # 将3维特征转换为1维向量
 flatten = tf.layers.flatten(pool3)
@@ -124,5 +124,5 @@ if __name__ == "__main__":
     for file_name in os.listdir(full_image_dir):
         full_image_path = os.path.join(full_image_dir,file_name)
         a=test_model(full_image_path)
-        print("test datas  {}\t validate labels: {}".format(a, label_dict[int(a)]))
+        print("filename {} test datas  {}\t validate labels: {}".format(file_name,a, label_dict[int(a)]))
         

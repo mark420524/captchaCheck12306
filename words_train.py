@@ -10,7 +10,7 @@ import argparse
 from image_util import read_image
 import os
 
-batch_size = 64
+batch_size = 32
 n_gpus = 1
 n_epochs = 40
 image_shape = (64, 64, 3)
@@ -18,7 +18,7 @@ n_classes = 80
 initial_learning_rate = 0.1
 reduce_lr_epoch_1 = 20
 reduce_lr_epoch_2 = 30
-image_dir = "E:\\aaaaa\\download_captcha\\curt_words\\traindata"
+image_dir = "E:\\aaaaa\\download_captcha\\resize_words"
 
 
 def test_model():
