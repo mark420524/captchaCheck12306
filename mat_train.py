@@ -47,9 +47,9 @@ print("[INFO] loading images...")
 imagePaths = sorted(list(paths.list_images(args["dataset"])))
 random.seed(42)
 random.shuffle(imagePaths)
-
+#print(imagePaths)
 # loop over the input images
-
+#exit
 for imagePath in imagePaths:
     # load the image, pre-process it, and store it in the data list
     #im_file = os.path.join('', imagePath)
