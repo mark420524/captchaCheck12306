@@ -3,8 +3,19 @@ import pathlib
 
 import cv2
 import numpy as np
-
-
+import os
+from preparent import read_data
+def read_data_bak(data_dir):
+    datas = [] 
+    for fname in os.listdir(data_dir):
+        full_image_path = os.path.join(data_dir ,fname)
+        img = cv2.imdecode(np.fromfile(full_image_path, dtype=np.uint8),cv2.IMREAD_GRAYSCALE)
+        #img = cv2.imread(full_image_path, cv2.IMREAD_GRAYSCALE)
+        #img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        print(img.shape)
+        #img = img / 255.0
+        datas.append(img)
+    return datas
 def load_data(fn='texts.npz', to=False):
     from keras.utils import to_categorical
     data = np.load(fn)
@@ -57,7 +68,7 @@ def main():
                   metrics=['accuracy'])
     # 当标准评估停止提升时，降低学习速率
     reduce_lr = ReduceLROnPlateau(verbose=1)
-    history = model.fit(train_x, train_y, epochs=1000,
+    history = model.fit(train_x, train_y, epochs=1500,
                         validation_data=(test_x, test_y),
                         callbacks=[reduce_lr])
     savefig(history, start=10)
@@ -141,7 +152,7 @@ def main_v20():
 
 def predict(texts):
     from keras import models
-    model = models.load_model('model.h5')
+    model = models.load_model('model.v1.0.h5')
     texts = texts / 255.0
     _, h, w = texts.shape
     texts.shape = (-1, h, w, 1)
@@ -167,7 +178,13 @@ def show():
 
 
 if __name__ == '__main__':
-    main()
+    #main()
     # main_v2()
     #_predict()
     #show()
+    data_dir = "E:\\aaaaa\\3333\\"
+    data  = read_data_bak(data_dir)
+    #print(len(data))
+    #print(lables)
+    labels = predict( data )
+    print(len(labels))
