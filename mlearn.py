@@ -5,8 +5,25 @@ import cv2
 import numpy as np
 import os
 from preparent import read_data
+epoch_size=800
+label_dict={
+    0: '中国结', 1: '仪表盘', 2: '公交卡', 3: '冰箱', 4: '创可贴', 
+    5: '刺绣', 6: '剪纸', 7: '印章', 8: '卷尺', 9: '双面胶', 10: '口哨', 
+    11: '啤酒', 12: '安全帽',13: '开瓶器', 14: '手掌印', 15: '打字机', 
+    16: '护腕', 17: '拖把', 18: '挂钟', 19: '排风机', 20: '文具盒', 
+    21: '日历', 22: '本子', 23: '档案袋', 24: '棉棒', 25:'樱桃', 26: '毛线', 
+    27: '沙包', 28: '沙拉', 29: '海报', 30: '海苔', 31: '海鸥',32: '漏斗', 
+    33: '烛台', 34: '热水袋', 35: '牌坊', 36: '狮子', 37: '珊瑚', 38: '电子秤', 
+    39: '电线', 40: '电饭煲', 41: '盘子', 42: '篮球', 43: '红枣', 44: '红豆', 
+    45: '红酒', 46: '绿豆', 47: '网球拍', 48: '老虎', 49: '耳塞', 50: '航母', 
+    51: '苍蝇拍', 52: '茶几', 53: '茶盅', 54: '药片', 55: '菠萝', 56: '蒸笼', 
+    57: '薯条', 58: '蚂蚁', 59: '蜜蜂', 60: '蜡烛', 61: '蜥蜴', 62: '订书机', 
+    63: '话梅', 64: '调色板', 65: '跑步机', 66: '路灯', 67: '辣椒酱', 68: '金字塔', 
+    69: '钟表', 70: '铃铛', 71: '锅铲', 72: '锣', 73: '锦旗', 74: '雨靴', 
+    75: '鞭炮', 76: '风铃', 77: '高压锅', 78: '黑板', 79: '龙舟'}
 def read_data_bak(data_dir):
     datas = [] 
+    full_name = []
     for fname in os.listdir(data_dir):
         full_image_path = os.path.join(data_dir ,fname)
         img = cv2.imdecode(np.fromfile(full_image_path, dtype=np.uint8),cv2.IMREAD_GRAYSCALE)
@@ -15,7 +32,8 @@ def read_data_bak(data_dir):
         print(img.shape)
         #img = img / 255.0
         datas.append(img)
-    return datas
+        full_name.append(fname)
+    return np.array(datas),full_name
 def load_data(fn='texts.npz', to=False):
     from keras.utils import to_categorical
     data = np.load(fn)
@@ -68,7 +86,7 @@ def main():
                   metrics=['accuracy'])
     # 当标准评估停止提升时，降低学习速率
     reduce_lr = ReduceLROnPlateau(verbose=1)
-    history = model.fit(train_x, train_y, epochs=1500,
+    history = model.fit(train_x, train_y, epochs=epoch_size,
                         validation_data=(test_x, test_y),
                         callbacks=[reduce_lr])
     savefig(history, start=10)
@@ -103,7 +121,7 @@ def main_v19():     # 1.9
                   loss='categorical_hinge',
                   metrics=[acc])
     reduce_lr = ReduceLROnPlateau(verbose=1)
-    history = model.fit(train_x, train_y, epochs=100,
+    history = model.fit(train_x, train_y, epochs=epoch_size,
                         validation_data=(test_x, test_y),
                         callbacks=[reduce_lr])
     savefig(history)
@@ -135,7 +153,7 @@ def main_v20():
     model.compile(optimizer='rmsprop',
                   loss='sparse_categorical_crossentropy',
                   metrics=['accuracy'])
-    model.fit(train_x, train_y, epochs=10,
+    model.fit(train_x, train_y, epochs=epoch_size,
               validation_data=(test_x, test_y))
     (train_x, train_y), (test_x, test_y) = load_data_v2()
     model.compile(optimizer='rmsprop',
@@ -175,16 +193,24 @@ def show():
         # 使用聚类结果命名
         fn = f'classify/{label}.{idx}.jpg'
         cv2.imwrite(fn, text)
-
-
-if __name__ == '__main__':
-    #main()
-    # main_v2()
-    #_predict()
-    #show()
-    data_dir = "E:\\aaaaa\\3333\\"
-    data  = read_data_bak(data_dir)
+def test_predict(data_dir):
+    
+    data,full_name  = read_data_bak(data_dir)
     #print(len(data))
     #print(lables)
     labels = predict( data )
-    print(len(labels))
+    labels = labels.argmax(axis=1)
+    count = 0
+    for label in labels:
+        print("{}={}".format(full_name[count],label_dict[label]))
+        #print(label_dict[label])
+        count=count+1
+
+if __name__ == '__main__':
+    #main()
+    main_v20()
+    #_predict()
+    #show()
+    #data_dir = "E:\\aaaaa\\3333\\"
+    #test_predict(data_dir)   
+    #print(labels)
