@@ -28,5 +28,5 @@ def downloadCaptcha(dir,retry=False):
     return path
 if __name__ == '__main__':
     while True:
-        downloadCaptcha("temp")
+        downloadCaptcha("temp1")
         time.sleep(5)
