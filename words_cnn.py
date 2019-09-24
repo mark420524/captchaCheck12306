@@ -9,7 +9,7 @@ import tensorflow as tf
 
 
 # 数据文件夹
-data_dir = "resize_words"
+data_dir = "E:\\liujie\\dataset"
 # 训练还是测试
 train = True
 # 模型文件路径
@@ -71,7 +71,7 @@ num_classes = len(set(labels))
 
 
 # 定义Placeholder，存放输入和标签
-datas_placeholder = tf.placeholder(tf.float32, [None, 64, 64, 3])
+datas_placeholder = tf.placeholder(tf.float32, [None, 67, 67, 3])
 labels_placeholder = tf.placeholder(tf.int32, [None])
 
 # 存放DropOut参数的容器，训练时为0.25，测试时为0
