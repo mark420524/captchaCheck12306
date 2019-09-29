@@ -10,6 +10,7 @@ from keras.preprocessing.image import img_to_array
 from sklearn.preprocessing import LabelBinarizer
 from sklearn.model_selection import train_test_split
 from imagesearch.smallervggnet import SmallerVGGNet
+from keras.utils import to_categorical
 import matplotlib.pyplot as plt
 from imutils import paths
 import numpy as np
@@ -18,6 +19,7 @@ import random
 import pickle
 import cv2
 import os
+
 
 
 ap = argparse.ArgumentParser()
@@ -41,15 +43,30 @@ LOSS_PLOT_PATH=args["plot"]
 # initialize the data and labels
 data = []
 labels = []
+
+
+
+def load_data(fn , is_label=False):
+    data_set = np.load(fn)
+    texts,labels=data_set['dataset'],data_set['labels']
+    texts = texts/255
+    _,h,w,d=texts.shape
+    texts.shape=(-1,h,w,d)
+
+    if is_label:
+        labels = to_categorical(labels)
+    n = int(texts.shape[0] * 0.9)   # 90%用于训练，10%用于测试
+    return (texts[:n], labels[:n]), (texts[n:], labels[n:])
  
 # grab the image paths and randomly shuffle them
 print("[INFO] loading images...")
-imagePaths = sorted(list(paths.list_images(args["dataset"])))
-random.seed(42)
-random.shuffle(imagePaths)
+#imagePaths = sorted(list(paths.list_images(args["dataset"])))
+#random.seed(42)
+#random.shuffle(imagePaths)
 #print(imagePaths)
 # loop over the input images
 #exit
+"""
 for imagePath in imagePaths:
     # load the image, pre-process it, and store it in the data list
     #im_file = os.path.join('', imagePath)
@@ -64,20 +81,20 @@ for imagePath in imagePaths:
     # labels list
     label = imagePath.split(os.path.sep)[-2]
     labels.append(label)
+"""
 # scale the raw pixel intensities to the range [0, 1]
-data = np.array(data, dtype="float") / 255.0
-labels = np.array(labels)
-print("[INFO] data matrix: {:.2f}MB".format(
-    data.nbytes / (1024 * 1000.0)))
+(trainX, trainY),(testX, testY) = load_data('dataset.npz')  
+#labels = np.array(labels)
+
  
 # binarize the labels
 lb = LabelBinarizer()
-labels = lb.fit_transform(labels)
+labels = lb.fit_transform(trainY)
  
 # partition the data into training and testing splits using 80% of
 # the data for training and the remaining 20% for testing
-(trainX, testX, trainY, testY) = train_test_split(data,
-    labels, test_size=0.2, random_state=42)
+#(trainX, testX, trainY, testY) = train_test_split(data,
+#    labels, test_size=0.2, random_state=42)
 """
   图像预处理  参数意义参见  https://keras.io/zh/preprocessing/image/
 """

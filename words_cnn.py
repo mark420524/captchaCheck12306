@@ -16,6 +16,9 @@ train = True
 model_path = "save/text_model"
 label_name_dict={}
 label_dict={}
+num_epochs=100
+batch_size=1000
+num_threads=4
 # 从文件夹读取图片和标签到numpy数组中
 # 标签信息在文件名中，例如1_40.jpg表示该图片的标签为1
 def read_data(data_dir,label_path="label.txt"):
@@ -63,11 +66,14 @@ def read_data(data_dir,label_path="label.txt"):
                 #label_object[lable_name]=int(id)
     print("shape of datas: {}\tshape of labels: {}".format(datas.shape, labels.shape))
     return fpaths, datas, labels
-
-
-fpaths, datas, labels = read_data(data_dir )
+def get_batch_data():
+    _,images, label = read_data(data_dir )
+    input_queue = tf.train.slice_input_producer([images, label], shuffle=False,num_epochs=num_epochs)
+    image_batch, label_batch = tf.train.batch(input_queue, batch_size=batch_size, num_threads=num_threads, capacity=64,allow_smaller_final_batch=False)
+    return image_batch,label_batch
+datas, labels = get_batch_data()
 # 计算有多少类图片
-num_classes = len(set(labels))
+num_classes = 80
 
 
 # 定义Placeholder，存放输入和标签
@@ -132,17 +138,32 @@ with tf.Session() as sess:
         print("训练模式")
         # 如果是训练，初始化参数
         sess.run(tf.global_variables_initializer())
+        sess.run(tf.local_variables_initializer())#就是这一行
+        coord = tf.train.Coordinator()
+        threads = tf.train.start_queue_runners(sess,coord)
         # 定义输入和Label以填充容器，训练时dropout为0.25
         train_feed_dict = {
             datas_placeholder: datas,
             labels_placeholder: labels,
             dropout_placeholdr: 0.25
         }
-        for step in range(150):
-            _, mean_loss_val = sess.run([optimizer, mean_loss], feed_dict=train_feed_dict)
+        #for step in range(100):
+        try:
+            while not coord.should_stop():
+                #i,l = sess.run([images,label])
+                i, mean_loss_val = sess.run([optimizer, mean_loss], feed_dict=train_feed_dict)
+                #print(i)
+                #print(l)
+                print("step = {}\tmean loss = {}".format(i, mean_loss_val))
+        except tf.errors.OutOfRangeError:
+            print('Done training')
+        finally:
+            coord.request_stop()
 
-            if step % 10 == 0:
-                print("step = {}\tmean loss = {}".format(step, mean_loss_val))
+        #_, mean_loss_val = sess.run([optimizer, mean_loss], feed_dict=train_feed_dict)
+
+        #if step % 10 == 0:
+            #print("step = {}\tmean loss = {}".format(step, mean_loss_val))
         saver.save(sess, model_path)
         print("训练结束，保存模型到{}".format(model_path))
     else:

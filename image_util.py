@@ -164,7 +164,7 @@ def read_image(image_dir,image_shape=None,label_path="label.txt"):
         image = np.asarray(image)
         train_images.append(image)
         train_labels.append(file_label_dict[file_path])
-    return np.array(train_images),np.array(train_labels)
+    return  train_images , train_labels 
 def resizeImage(dir,image_shape=(64, 64)):
     #path=os.path.join(dir, '')
     count = 0
@@ -178,12 +178,13 @@ def resizeImage(dir,image_shape=(64, 64)):
     return count
 
 if __name__ == '__main__':
-    image_dir = "curt_words\\traindata"
+    image_dir = "E:\\liujie\\dataset"
     
-    resizeImage(image_dir)
+    #resizeImage(image_dir)
     #image_dir="E:\\aaaaa\\download_captcha\\curt_words\\traindata\\安全帽\\5072c75d-1911-459e-adc4-308f71f76f9e.png"
     #flag=judgeImageBackground(image_dir)
-     
+    image_data,labels=read_image(image_dir)
+    np.savez('dataset',dataset=image_data,labels=labels)
     #print(curtDirImage(image_dir))
     #imageShape = (64,64)
     #cutImageName = splitImageText(image_dir,imageShape,flag)
