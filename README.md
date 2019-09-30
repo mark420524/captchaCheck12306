@@ -16,8 +16,8 @@ download the 12306 captcha and check the result
   训练依赖 ```keras  sklearn imutils matplotlib tensorflow opencv-python```
 
   训练命令  
-   ```python mat_train.py --dataset traindata  --model aaa.model --labelbin 12306.pickle```
+   ```python mat_train.py --dataset dataset.npz  --model aaa.model --labelbin 12306.pickle```
    ```python words_train.py --train -m=DenseNet-BC -k=24 -d=40```
 
   识别命令 
-   ```python classify.py --model pokedex.model --labelbin lb.pickle --image examples/example.png```
+   ```python mat_image_classify.py --model pokedex.model --labelbin lb.pickle --image examples/example.png```

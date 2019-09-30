@@ -83,7 +83,7 @@ for imagePath in imagePaths:
     labels.append(label)
 """
 # scale the raw pixel intensities to the range [0, 1]
-(trainX, trainY),(testX, testY) = load_data('dataset.npz')  
+(trainX, trainY),(testX, testY) = load_data(args['dataset'])  
 #labels = np.array(labels)
 
  
