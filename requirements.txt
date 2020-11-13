@@ -2,5 +2,5 @@ keras==2.2.5
 sklearn
 imutils==0.5.3
 matplotlib==3.1.1
-tensorflow==1.14.0
+tensorflow==2.3.1
 opencv-python==4.1.1.26
